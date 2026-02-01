@@ -81,8 +81,7 @@ def run_simulation(initial_capital=10000):
     return results, bandit_summary, baseline
 
 
-if __name__ == "__main__":
-    results, bandit_summary, baseline = run_simulation()
-
-    print("Bandit metrics:", bandit_summary)
-    print("Baseline final capital:", baseline["capital"].iloc[-1])
+if __name__ == "__main__" and __package__ is None:
+    raise RuntimeError(
+        "Run this module with: python -m src.simulator"
+    )

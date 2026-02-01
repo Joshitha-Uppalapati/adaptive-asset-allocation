@@ -84,7 +84,7 @@ This creates data/prices.db locally
 
 4. Run backtest
 ```bash
-python src/simulator.py
+python -m src.simulator
 ```
 This prints cumulative return, max drawdown, and Sharpe ratio for the run.
 
