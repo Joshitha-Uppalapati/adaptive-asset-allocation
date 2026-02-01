@@ -53,6 +53,7 @@ adaptive-asset-allocation/
 ├── requirements.txt
 └── README.md
 ```
+data/ is created locally during ingestion and is intentionally not committed to version control.
 
 ---
 
@@ -79,6 +80,7 @@ initial_capital: 10000
 ```bash
 python src/ingest_data.py
 ```
+This creates data/prices.db locally
 
 4. Run backtest
 ```bash
@@ -154,4 +156,4 @@ These tradeoffs are intentional to keep the system readable and debuggable.
 
 ## Final note
 This project is meant to be small, practical, and honest.
-It prioritizes clarity over complexity and correctness over flash.
+It prioritizes clarity over complexity and correctness over flashiness.
