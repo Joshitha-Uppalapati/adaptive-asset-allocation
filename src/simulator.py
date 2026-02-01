@@ -8,7 +8,7 @@ from src.metrics import cumulative_return, max_drawdown, sharpe_ratio
 DB_PATH = "data/prices.db"
 
 
-def load_prices():
+def load_prices() -> pd.DataFrame:
     conn = sqlite3.connect(DB_PATH)
     df = pd.read_sql("SELECT * FROM prices", conn)
     conn.close()
@@ -19,11 +19,13 @@ def load_prices():
     return df
 
 
-def compute_returns(price_df):
+def compute_returns(price_df: pd.DataFrame) -> pd.DataFrame:
     return price_df.pct_change().dropna()
 
 
-def run_equal_weight_baseline(returns, initial_capital):
+def run_equal_weight_baseline(
+    returns: pd.DataFrame, initial_capital: float
+) -> pd.DataFrame:
     capital = initial_capital
     history = []
 
@@ -41,7 +43,7 @@ def run_equal_weight_baseline(returns, initial_capital):
     return pd.DataFrame(history)
 
 
-def run_simulation(initial_capital=10000):
+def run_simulation(initial_capital: float = 10000.0):
     prices = load_prices()
     returns = compute_returns(prices)
 
@@ -70,18 +72,31 @@ def run_simulation(initial_capital=10000):
     results = pd.DataFrame(history)
     daily_returns = results["capital"].pct_change().dropna()
 
-    bandit_summary = {
-        "cumulative_return": cumulative_return(results["capital"]),
-        "max_drawdown": max_drawdown(results["capital"]),
-        "sharpe_ratio": sharpe_ratio(daily_returns),
+    bandit_metrics = {
+        "cumulative_return": float(cumulative_return(results["capital"])),
+        "max_drawdown": float(max_drawdown(results["capital"])),
+        "sharpe_ratio": float(sharpe_ratio(daily_returns)),
     }
 
     baseline = run_equal_weight_baseline(returns, initial_capital)
 
-    return results, bandit_summary, baseline
+    return results, bandit_metrics, baseline
 
 
-if __name__ == "__main__" and __package__ is None:
-    raise RuntimeError(
-        "Run this module with: python -m src.simulator"
+def main():
+    results, bandit_metrics, baseline = run_simulation()
+
+    print("\nBandit strategy metrics:")
+    for k, v in bandit_metrics.items():
+        print(f"  {k}: {v:.4f}")
+
+    print(
+        f"\nBaseline final capital: {baseline['capital'].iloc[-1]:.2f}"
     )
+    print(
+        f"Bandit final capital:   {results['capital'].iloc[-1]:.2f}"
+    )
+
+
+if __name__ == "__main__":
+    main()
