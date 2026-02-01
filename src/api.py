@@ -35,3 +35,7 @@ def get_allocation():
     return {
         "weights": weights
     }
+    
+@app.get("/health")
+def health():
+    return {"status": "ok"}
