@@ -1,8 +1,8 @@
 import sqlite3
 import pandas as pd
 
-from bandit import GaussianThompsonSampler
-from metrics import cumulative_return, max_drawdown, sharpe_ratio
+from src.bandit import GaussianThompsonSampler
+from src.metrics import cumulative_return, max_drawdown, sharpe_ratio
 
 
 DB_PATH = "data/prices.db"
@@ -21,6 +21,24 @@ def load_prices():
 
 def compute_returns(price_df):
     return price_df.pct_change().dropna()
+
+
+def run_equal_weight_baseline(returns, initial_capital):
+    capital = initial_capital
+    history = []
+
+    for date, row in returns.iterrows():
+        daily_return = row.mean()
+        capital *= (1 + daily_return)
+
+        history.append(
+            {
+                "date": date,
+                "capital": capital,
+            }
+        )
+
+    return pd.DataFrame(history)
 
 
 def run_simulation(initial_capital=10000):
@@ -51,15 +69,20 @@ def run_simulation(initial_capital=10000):
 
     results = pd.DataFrame(history)
     daily_returns = results["capital"].pct_change().dropna()
-    summary = {
-    "cumulative_return": float(cumulative_return(results["capital"])),
-    "max_drawdown": float(max_drawdown(results["capital"])),
-    "sharpe_ratio": float(sharpe_ratio(daily_returns)),
-}
-    return results, summary
 
+    bandit_summary = {
+        "cumulative_return": cumulative_return(results["capital"]),
+        "max_drawdown": max_drawdown(results["capital"]),
+        "sharpe_ratio": sharpe_ratio(daily_returns),
+    }
+
+    baseline = run_equal_weight_baseline(returns, initial_capital)
+
+    return results, bandit_summary, baseline
 
 
 if __name__ == "__main__":
-    results, summary = run_simulation()
-    print(summary)
+    results, bandit_summary, baseline = run_simulation()
+
+    print("Bandit metrics:", bandit_summary)
+    print("Baseline final capital:", baseline["capital"].iloc[-1])

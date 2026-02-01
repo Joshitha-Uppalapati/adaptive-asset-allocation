@@ -1,5 +1,4 @@
+data/
+*.db
 venv/
 __pycache__/
-*.pyc
-data/
-prices.db
