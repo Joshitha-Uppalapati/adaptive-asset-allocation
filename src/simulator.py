@@ -2,6 +2,8 @@ import sqlite3
 import pandas as pd
 
 from bandit import GaussianThompsonSampler
+from metrics import cumulative_return, max_drawdown, sharpe_ratio
+
 
 DB_PATH = "data/prices.db"
 
@@ -47,9 +49,17 @@ def run_simulation(initial_capital=10000):
             }
         )
 
-    return pd.DataFrame(history)
+    results = pd.DataFrame(history)
+    daily_returns = results["capital"].pct_change().dropna()
+    summary = {
+    "cumulative_return": float(cumulative_return(results["capital"])),
+    "max_drawdown": float(max_drawdown(results["capital"])),
+    "sharpe_ratio": float(sharpe_ratio(daily_returns)),
+}
+    return results, summary
+
 
 
 if __name__ == "__main__":
-    results = run_simulation()
-    print(results.tail())
+    results, summary = run_simulation()
+    print(summary)
