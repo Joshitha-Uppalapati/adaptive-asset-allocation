@@ -1,4 +1,10 @@
+# Data artifacts
 data/
 *.db
+
+# Virtual environments
 venv/
-__pycache__/
+
+# Python cache
+**/__pycache__/
+*.pyc
