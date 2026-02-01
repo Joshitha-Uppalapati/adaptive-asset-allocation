@@ -1,0 +1,6 @@
+assets:
+  - AAPL
+  - GOOGL
+  - MSFT
+lookback_period: 365
+initial_capital: 10000
