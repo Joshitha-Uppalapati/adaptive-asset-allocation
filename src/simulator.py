@@ -1,5 +1,6 @@
 import sqlite3
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from src.bandit import GaussianThompsonSampler
 from src.metrics import cumulative_return, max_drawdown, sharpe_ratio
@@ -82,6 +83,31 @@ def run_simulation(initial_capital: float = 10000.0):
 
     return results, bandit_metrics, baseline
 
+def save_comparison_plot(results, baseline):
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(
+        results["date"],
+        results["capital"],
+        label="Gaussian Thompson Sampling",
+        linewidth=2,
+    )
+
+    plt.plot(
+        baseline["date"],
+        baseline["capital"],
+        label="Equal-Weight Baseline",
+        linestyle="--",
+    )
+
+    plt.xlabel("Date")
+    plt.ylabel("Portfolio Value")
+    plt.title("Adaptive Asset Allocation vs Baseline")
+    plt.legend()
+    plt.tight_layout()
+
+    plt.savefig("results/portfolio_value.png")
+    plt.close()
 
 def main():
     results, bandit_metrics, baseline = run_simulation()
@@ -99,4 +125,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    results, bandit_summary, baseline = run_simulation()
+
+    print("\nBandit strategy metrics:")
+    for k, v in bandit_summary.items():
+        print(f"  {k}: {v:.4f}")
+
+    print(f"\nBaseline final capital: {baseline['capital'].iloc[-1]:.2f}")
+    print(f"Bandit final capital:   {results['capital'].iloc[-1]:.2f}")
+
+    save_comparison_plot(results, baseline)
