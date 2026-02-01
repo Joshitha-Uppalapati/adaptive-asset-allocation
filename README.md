@@ -1,5 +1,8 @@
 ## Adaptive Asset Allocation
 
+![Portfolio Value Comparison](results/portfolio_value.png)
+Comparison of portfolio value over time for the Gaussian Thompson Sampling strategy versus an equal-weight baseline.
+
 A paper-trading system that uses a bandit-based strategy to dynamically allocate capital across multiple assets using historical market data.
 
 This project started as a personal experiment to understand whether simple reinforcement learning techniques can outperform static allocation strategies in noisy, real-world financial data.
@@ -34,6 +37,20 @@ This project uses Gaussian Thompson Sampling, which models each asset’s return
 To keep the implementation stable and interpretable, variance is treated as fixed and the mean is updated incrementally. This keeps the learning behavior easy to reason about and avoids overfitting on limited data.
 
 ---
+
+## Baseline Comparison
+
+To evaluate whether the adaptive strategy adds value, I compare the
+Gaussian Thompson Sampling policy against a simple equal-weight baseline
+using the same historical returns.
+
+Both strategies are simulated over identical market conditions. The
+baseline allocates capital evenly across all assets, while the bandit
+adapts allocations based on observed returns.
+
+This provides a controlled comparison of adaptive versus static
+allocation without introducing additional assumptions.
+
 
 ## Project structure
 ```text
@@ -156,4 +173,4 @@ These tradeoffs are intentional to keep the system readable and debuggable.
 
 ## Final note
 This project is meant to be small, practical, and honest.
-It prioritizes clarity over complexity and correctness over flashiness.
+It prioritizes correctness and clarity over complexity or flashiness.
